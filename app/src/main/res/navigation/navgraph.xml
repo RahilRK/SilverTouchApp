@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navgraph"
+    app:startDestination="@id/addCategoryFragment">
+
+    <fragment
+        android:id="@+id/addCategoryFragment"
+        android:name="com.rk.silvertouchapp.ui.fragment.AddCategoryFragment"
+        android:label="@string/add_category"
+        tools:layout="@layout/fragment_add_category">
+        <action
+            android:id="@+id/action_addCategoryFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment" />
+        <action
+            android:id="@+id/action_addCategoryFragment_to_contactListFragment"
+            app:destination="@id/contactListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactListFragment"
+        android:name="com.rk.silvertouchapp.ui.fragment.ContactListFragment"
+        android:label="@string/contact_list"
+        tools:layout="@layout/fragment_contact_list">
+        <action
+            android:id="@+id/action_contactListFragment_to_addCategoryFragment"
+            app:destination="@id/addCategoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addContactFragment"
+        android:name="com.rk.silvertouchapp.ui.fragment.AddContactFragment"
+        android:label="@string/add_contact"
+        tools:layout="@layout/fragment_add_contact">
+        <action
+            android:id="@+id/action_addContactFragment_to_addCategoryFragment"
+            app:destination="@id/addCategoryFragment" />
+    </fragment>
+</navigation>
