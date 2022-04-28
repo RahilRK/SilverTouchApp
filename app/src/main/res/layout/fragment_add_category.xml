@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".ui.fragment.AddCategoryFragment">
+    tools:context=".ui.fragment.addCategory.AddCategoryFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/categoryNameTil"
@@ -34,8 +34,18 @@
         android:id="@+id/saveCategorybt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/save"
         android:layout_gravity="center_horizontal"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin32"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginEnd="@dimen/margin16"
+        android:layout_marginBottom="@dimen/margin16"
         />
 
 </LinearLayout>
