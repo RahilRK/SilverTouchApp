@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rahilkarim.skpust.ui.BusinessDetailFrag.CategoryListAdapter
@@ -28,6 +30,7 @@ class ContactListFragment : Fragment() {
     lateinit var repository: Repository
     lateinit var viewModel: ContactListFragVM
 
+    val toolbar : androidx.appcompat.widget.Toolbar get() = binding.toolbar
     val recyclerView : RecyclerView get() = binding.recyclerView
 
     private var arrayList = arrayListOf<Contact>()
@@ -46,6 +49,7 @@ class ContactListFragment : Fragment() {
         binding = FragmentContactListBinding.inflate(layoutInflater,container,false)
 
         init()
+        setToolbar()
         observeData()
 
         return binding.root
@@ -56,6 +60,14 @@ class ContactListFragment : Fragment() {
         repository = (requireActivity().application as Application).repository
         viewModel = ViewModelProvider(this, ContactListFragVMFactory(repository))
             .get(ContactListFragVM::class.java)
+    }
+
+    fun setToolbar() {
+//        toolbar.title = resources.getString(R.string.add_image)
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+//        toolbar.setNavigationOnClickListener {
+//            getActivity()?.onBackPressed()
+//        }
     }
 
     private fun observeData() {
@@ -79,6 +91,8 @@ class ContactListFragment : Fragment() {
         adapter = ContactListAdapter(activity, arrayList, object : ContactListAdapter.contactListAdapterOnClick {
             override fun editContact(pos: Int, model: Contact) {
 
+                val action = ContactListFragmentDirections.actionContactListFragmentToEditContactFragment3(model)
+                findNavController().navigate(action)
             }
 
             override fun removeContact(pos: Int, model: Contact) {

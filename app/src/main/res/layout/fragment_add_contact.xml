@@ -7,6 +7,18 @@
     android:orientation="vertical"
     tools:context=".ui.fragment.addCategory.AddCategoryFragment">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profileImage"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/ic_profile"
+        app:civ_border_width="2dp"
+        android:layout_gravity="center"
+        app:civ_border_color="#50000000"
+        android:layout_marginTop="@dimen/margin16"
+        />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/firstNameTil"
         android:layout_width="match_parent"

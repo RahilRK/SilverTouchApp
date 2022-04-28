@@ -1,6 +1,10 @@
 package com.rk.silvertouchapp.ui.fragment.addContact
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -11,7 +15,13 @@ import android.widget.Button
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.rk.silvertouchapp.adapter.CategorySpinnerAdapter
 import com.rk.silvertouchapp.databinding.FragmentAddContactBinding
 import com.rk.silvertouchapp.model.Category
@@ -19,6 +29,9 @@ import com.rk.silvertouchapp.model.Contact
 import com.rk.silvertouchapp.util.Application
 import com.rk.silvertouchapp.util.GlobalClass
 import com.rk.silvertouchapp.util.Repository
+import de.hdodenhof.circleimageview.CircleImageView
+import droidninja.filepicker.FilePickerBuilder
+import droidninja.filepicker.FilePickerConst
 import java.util.regex.Pattern
 
 
@@ -32,6 +45,7 @@ class AddContactFragment : Fragment() {
     lateinit var repository: Repository
     lateinit var viewModel: AddContactFragVM
 
+    val profileImage : CircleImageView get() = binding.profileImage
     val firstNameEd : TextInputEditText get() = binding.firstNameEd
     val lastNameEd : TextInputEditText get() = binding.lastNameEd
     val mobileNoEd : TextInputEditText get() = binding.mobileNoEd
@@ -42,6 +56,7 @@ class AddContactFragment : Fragment() {
     private var arrayList = arrayListOf<Category>()
     lateinit var adapter: CategorySpinnerAdapter
 
+    var selectedimagesArrayList = java.util.ArrayList<Uri>()
     var categoryId = 0
     var categoryName = ""
 
@@ -73,11 +88,16 @@ class AddContactFragment : Fragment() {
 
     private fun onClick() {
 
+        profileImage.setOnClickListener {
+            requestStoragePermission()
+        }
+
         saveCategorybt.setOnClickListener {
 
             if(isValidate()) {
                 viewModel.addContact(
                     Contact(
+                        profileImage = selectedimagesArrayList[0].toString(),
                         firstName = firstNameEd.text.toString(),
                         lastName = lastNameEd.text.toString(),
                         mobileNumber = mobileNoEd.text.toString(),
@@ -144,6 +164,69 @@ class AddContactFragment : Fragment() {
             else {
                 globalClass.toastlong("Please add some category")
                 getActivity()?.onBackPressed()
+            }
+        }
+    }
+
+    fun requestStoragePermission() {
+
+        Dexter.withActivity(requireActivity())
+            .withPermissions(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if (report.areAllPermissionsGranted()) {
+                        openImagePicker()
+                    }
+                    if (report.deniedPermissionResponses.size > 0) {
+                        globalClass.log(TAG, "Storage permission Denied")
+                        globalClass.toastlong("Storage permission required to choose image")
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: List<PermissionRequest>,
+                    token: PermissionToken
+                ) {
+                    token.continuePermissionRequest()
+                }
+            })
+            .withErrorListener { error ->
+                globalClass.log(TAG + "__requestStoragePermission", error.toString())
+            }
+            .onSameThread()
+            .check()
+    }
+
+    fun openImagePicker() {
+        selectedimagesArrayList.clear()
+        FilePickerBuilder.instance
+            .setMaxCount(1)
+            .enableCameraSupport(false)
+            .setSelectedFiles(selectedimagesArrayList)
+//            .setActivityTheme(R.style.LibAppTheme)
+            .pickPhoto(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == FilePickerConst.REQUEST_CODE_PHOTO) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                selectedimagesArrayList.clear()
+                data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
+                    ?.let { selectedimagesArrayList.addAll(it) }
+
+                globalClass.log(TAG, "selectedImages: ${selectedimagesArrayList.size}")
+                if(selectedimagesArrayList.isNotEmpty()) {
+
+                    profileImage.setImageURI(selectedimagesArrayList[0])
+                }
+                else {
+                    globalClass.toastlong("Unable to load image")
+                }
             }
         }
     }

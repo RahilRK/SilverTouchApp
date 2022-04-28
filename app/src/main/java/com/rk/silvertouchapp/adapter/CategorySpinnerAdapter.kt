@@ -9,7 +9,8 @@ import android.widget.TextView
 import com.rk.silvertouchapp.R
 import com.rk.silvertouchapp.model.Category
 
-class CategorySpinnerAdapter(
+class
+CategorySpinnerAdapter(
     private val context: Context,
     private val arrayList: java.util.ArrayList<Category>
     ) : BaseAdapter() {

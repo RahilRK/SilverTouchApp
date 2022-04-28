@@ -1,6 +1,7 @@
 package com.rahilkarim.skpust.ui.BusinessDetailFrag
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ class ContactListAdapter(
 
         val model = list[position]
 
+        binding.profileImage.setImageURI(Uri.parse(model.profileImage))
         binding.categoryName.text = model.categoryName
 
         binding.ivEdit.setOnClickListener {
