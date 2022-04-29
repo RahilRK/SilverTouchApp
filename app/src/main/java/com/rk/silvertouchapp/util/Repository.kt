@@ -36,4 +36,12 @@ class Repository(private val globalClass: GlobalClass,
 
         myDatabase.contactDAO().deleteContact(id)
     }
+
+    fun searchContactList(keyword : String):LiveData<List<Contact>> {
+        return myDatabase.contactDAO().searchContactList(keyword)
+    }
+
+    fun filterContactList(filterKeyword : String):LiveData<List<Contact>> {
+        return myDatabase.contactDAO().filterContactList(filterKeyword)
+    }
 }

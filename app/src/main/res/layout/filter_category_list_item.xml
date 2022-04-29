@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <RadioButton
+        android:id="@+id/categoryName"
+        android:layout_width="match_parent"
+        android:textStyle="bold"
+        android:layoutDirection="rtl"
+        android:textAlignment="textStart"
+        android:layout_gravity="start"
+        android:textSize="@dimen/sp16"
+        android:button="@drawable/radiobt_selector"
+        android:textColor="@color/black"
+        android:layout_marginStart="@dimen/margin8"
+        android:layout_marginEnd="@dimen/margin8"
+        android:text="@string/category_name"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin1"
+        />
+
+</LinearLayout>

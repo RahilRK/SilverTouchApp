@@ -16,4 +16,12 @@ interface ContactDAO {
 
     @Query("DELETE FROM contact WHERE id = :id")
     suspend fun deleteContact(id : Int)
+
+    @Query("select * from contact where " +
+            "firstName LIKE '%' ||:keyword|| '%' OR " +
+            "mobileNumber LIKE '%' ||:keyword|| '%'")
+    fun searchContactList(keyword: String) :LiveData<List<Contact>>
+
+    @Query("select * from contact where categoryName = :categoryName")
+    fun filterContactList(categoryName: String) :LiveData<List<Contact>>
 }

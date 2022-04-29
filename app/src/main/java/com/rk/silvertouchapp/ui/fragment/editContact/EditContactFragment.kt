@@ -1,4 +1,4 @@
-package com.rk.silvertouchapp.ui.fragment.addContact
+package com.rk.silvertouchapp.ui.fragment.editContact
 
 import android.Manifest
 import android.app.Activity
@@ -6,17 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.Button
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.textfield.TextInputEditText
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -25,10 +22,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.rk.silvertouchapp.R
 import com.rk.silvertouchapp.adapter.CategorySpinnerAdapter
-import com.rk.silvertouchapp.databinding.FragmentAddContactBinding
+import com.rk.silvertouchapp.databinding.FragmentEditContactBinding
 import com.rk.silvertouchapp.model.Category
 import com.rk.silvertouchapp.model.Contact
-import com.rk.silvertouchapp.ui.MainActivity
 import com.rk.silvertouchapp.util.Application
 import com.rk.silvertouchapp.util.GlobalClass
 import com.rk.silvertouchapp.util.Repository
@@ -38,15 +34,15 @@ import droidninja.filepicker.FilePickerConst
 import java.util.regex.Pattern
 
 
-class AddContactFragment : Fragment() {
+class EditContactFragment : Fragment() {
 
     var TAG = this.javaClass.simpleName
     private lateinit var activity: Context
 
-    lateinit var binding : FragmentAddContactBinding
+    lateinit var binding : FragmentEditContactBinding
     lateinit var globalClass: GlobalClass
     lateinit var repository: Repository
-    lateinit var viewModel: AddContactFragVM
+    lateinit var viewModel: EditContactFragVM
 
     val toolbar : androidx.appcompat.widget.Toolbar get() = binding.toolbar
     val profileImage : CircleImageView get() = binding.profileImage
@@ -60,26 +56,16 @@ class AddContactFragment : Fragment() {
     private var arrayList = arrayListOf<Category>()
     lateinit var adapter: CategorySpinnerAdapter
 
+    val args: EditContactFragmentArgs by navArgs()
+    var model: Contact? = null
     var selectedimagesArrayList = java.util.ArrayList<Uri>()
     var categoryId = 0
     var categoryName = ""
+    lateinit var profilePic : Uri
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         activity = requireContext()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        try {
-
-            (activity as MainActivity?)?.setToolbar(toolbar)
-        }
-        catch (e: Exception) {
-
-            val error = Log.getStackTraceString(e)
-            globalClass.log(TAG,error)
-        }
     }
 
     override fun onCreateView(
@@ -87,10 +73,11 @@ class AddContactFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentAddContactBinding.inflate(layoutInflater,container,false)
+        binding = FragmentEditContactBinding.inflate(layoutInflater,container,false)
 
         init()
         setToolbar()
+        setText()
         onClick()
         observeData()
 
@@ -100,12 +87,26 @@ class AddContactFragment : Fragment() {
     private fun init() {
         globalClass = (requireActivity().application as Application).globalClass
         repository = (requireActivity().application as Application).repository
-        viewModel = ViewModelProvider(this, AddContactFragVMFactory(repository))
-            .get(AddContactFragVM::class.java)
+        viewModel = ViewModelProvider(this, EditContactFragVMFactory(repository))
+            .get(EditContactFragVM::class.java)
     }
 
-    fun setToolbar() {
-        toolbar.title = resources.getString(R.string.add_contact)
+    private fun setToolbar() {
+        toolbar.title = resources.getString(R.string.edit_contact)
+    }
+
+    private fun setText() {
+        model = args.contactModelArgs
+        model?.let {
+            profilePic = Uri.parse(model!!.profileImage)
+            profileImage.setImageURI(profilePic)
+            firstNameEd.setText(model!!.firstName)
+            lastNameEd.setText(model!!.lastName)
+            mobileNoEd.setText(model!!.mobileNumber)
+            emailIdEd.setText(model!!.emailId)
+            categoryId = model!!.categoryId
+            categoryName = model!!.categoryName
+        }
     }
 
     private fun onClick() {
@@ -117,9 +118,10 @@ class AddContactFragment : Fragment() {
         saveCategorybt.setOnClickListener {
 
             if(isValidate()) {
-                viewModel.addContact(
+                viewModel.editContact(
                     Contact(
-                        profileImage = selectedimagesArrayList[0].toString(),
+                        id = model!!.id,
+                        profileImage = profilePic.toString(),
                         firstName = firstNameEd.text.toString(),
                         lastName = lastNameEd.text.toString(),
                         mobileNumber = mobileNoEd.text.toString(),
@@ -182,6 +184,8 @@ class AddContactFragment : Fragment() {
                         categoryName = model.categoryName
                     }
                 }
+
+                categorySpinner.setSelection(getSpinnerPos(arrayList))
             }
             else {
                 globalClass.toastlong("Please add some category")
@@ -190,7 +194,19 @@ class AddContactFragment : Fragment() {
         }
     }
 
-    fun requestStoragePermission() {
+    private fun getSpinnerPos(arrayList: ArrayList<Category>): Int {
+
+        for (i in 0 until arrayList.size) {
+
+            if(model!!.categoryId == arrayList.get(i).id.toInt()) {
+                return i
+            }
+        }
+
+        return 0
+    }
+
+    private fun requestStoragePermission() {
 
         Dexter.withActivity(requireActivity())
             .withPermissions(
@@ -244,7 +260,8 @@ class AddContactFragment : Fragment() {
                 globalClass.log(TAG, "selectedImages: ${selectedimagesArrayList.size}")
                 if(selectedimagesArrayList.isNotEmpty()) {
 
-                    profileImage.setImageURI(selectedimagesArrayList[0])
+                    profilePic = selectedimagesArrayList[0]
+                    profileImage.setImageURI(profilePic)
                 }
                 else {
                     globalClass.toastlong("Unable to load image")

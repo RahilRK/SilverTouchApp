@@ -13,4 +13,8 @@
     <string name="category_name">Category name</string>
     <string name="save">Save</string>
     <string name="contact_name">Contact name</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="search_contact">Search Contact</string>
+    <string name="filter_contact">Filter Contact</string>
 </resources>

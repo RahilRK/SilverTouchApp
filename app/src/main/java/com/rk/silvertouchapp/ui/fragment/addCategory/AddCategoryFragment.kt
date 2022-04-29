@@ -2,6 +2,7 @@ package com.rk.silvertouchapp.ui.fragment.addCategory
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.rahilkarim.skpust.ui.BusinessDetailFrag.CategoryListAdapter
+import com.rk.silvertouchapp.R
 import com.rk.silvertouchapp.databinding.FragmentAddCategoryBinding
 import com.rk.silvertouchapp.model.Category
+import com.rk.silvertouchapp.ui.MainActivity
 import com.rk.silvertouchapp.util.Application
 import com.rk.silvertouchapp.util.GlobalClass
 import com.rk.silvertouchapp.util.Repository
@@ -29,6 +32,7 @@ class AddCategoryFragment : Fragment() {
     lateinit var repository: Repository
     lateinit var viewModel: CategoryFragVM
 
+    val toolbar : androidx.appcompat.widget.Toolbar get() = binding.toolbar
     val categoryNameEd : TextInputEditText get() = binding.categoryNameEd
     val saveCategorybt : Button get() = binding.saveCategorybt
     val recyclerView : RecyclerView get() = binding.recyclerView
@@ -41,6 +45,19 @@ class AddCategoryFragment : Fragment() {
         activity = requireContext()
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        try {
+
+            (activity as MainActivity?)?.setToolbar(toolbar)
+        }
+        catch (e: Exception) {
+
+            val error = Log.getStackTraceString(e)
+            globalClass.log(TAG,error)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +66,7 @@ class AddCategoryFragment : Fragment() {
         binding = FragmentAddCategoryBinding.inflate(layoutInflater,container,false)
 
         init()
+        setToolbar()
         onClick()
         observeData()
 
@@ -60,6 +78,10 @@ class AddCategoryFragment : Fragment() {
         repository = (requireActivity().application as Application).repository
         viewModel = ViewModelProvider(this, CategoryFragVMFactory(repository))
             .get(CategoryFragVM::class.java)
+    }
+
+    fun setToolbar() {
+        toolbar.title = resources.getString(R.string.add_category)
     }
 
     private fun onClick() {

@@ -15,6 +15,7 @@
         android:theme="@style/Theme.SilverTouchApp">
         <activity
             android:name=".ui.MainActivity"
+            android:theme="@style/NoActionBarTheme"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

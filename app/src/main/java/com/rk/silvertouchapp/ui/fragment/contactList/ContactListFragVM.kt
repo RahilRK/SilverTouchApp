@@ -23,4 +23,15 @@ class ContactListFragVM(private val repository: Repository): ViewModel() {
             repository.deleteContact(id)
         }
     }
+
+    fun searchContactList(keyword: String):LiveData<List<Contact>> {
+        return repository.searchContactList(keyword)
+    }
+
+    fun filterContactList(filterKeyword: String):LiveData<List<Contact>> {
+        return repository.filterContactList(filterKeyword)
+    }
+
+    val categoryList: LiveData<List<Category>>
+        get() = repository.getCategoryList
 }

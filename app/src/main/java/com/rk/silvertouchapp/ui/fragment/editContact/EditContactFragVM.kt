@@ -14,6 +14,9 @@ class EditContactFragVM(private val repository: Repository): ViewModel() {
 
     var tag = "EditContactFragVM"
 
+    val categoryList: LiveData<List<Category>>
+        get() = repository.getCategoryList
+
     fun editContact(model: Contact) {
 
         viewModelScope.launch(Dispatchers.IO) {

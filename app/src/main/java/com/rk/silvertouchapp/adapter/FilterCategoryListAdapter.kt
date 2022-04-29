@@ -1,32 +1,29 @@
 package com.rahilkarim.skpust.ui.BusinessDetailFrag
 
 import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.rk.silvertouchapp.databinding.CategoryListItemBinding
-import com.rk.silvertouchapp.databinding.ContactListItemBinding
+import com.rk.silvertouchapp.databinding.FilterCategoryListItemBinding
 import com.rk.silvertouchapp.model.Category
-import com.rk.silvertouchapp.model.Contact
-import java.util.HashMap
 
 
-class ContactListAdapter(
+class FilterCategoryListAdapter(
     private val activity: Context,
-    private val list: ArrayList<Contact>,
-    private val onClick: contactListAdapterOnClick
-) : RecyclerView.Adapter<ContactListAdapter.ViewHolder>() {
+    private val selectedCategoryName: String,
+    private val list: ArrayList<Category>,
+    private val onClick: filterCategoryListAdapterOnClick
+) : RecyclerView.Adapter<FilterCategoryListAdapter.ViewHolder>() {
 
-    var tag = "ContactListAdapter"
-    lateinit var binding: ContactListItemBinding
+    var tag = "FilterCategoryListAdapter"
+    lateinit var binding: FilterCategoryListItemBinding
 
     // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // inflates the card_view_design view
         // that is used to hold list item
-        binding = ContactListItemBinding.inflate(
+        binding = FilterCategoryListItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -39,17 +36,16 @@ class ContactListAdapter(
 
         val model = list[position]
 
-        binding.profileImage.setImageURI(Uri.parse(model.profileImage))
-        binding.categoryName.text = model.firstName
+        binding.categoryName.text = model.categoryName
 
-        binding.ivEdit.setOnClickListener {
+        binding.categoryName.setOnClickListener {
 
-            onClick.editContact(position,model)
+            onClick.onClick(position,model)
         }
 
-        binding.ivDelete.setOnClickListener {
-
-            onClick.removeContact(position,model)
+        if (selectedCategoryName != "" &&
+            model.categoryName == selectedCategoryName) {
+            binding.categoryName.setChecked(true)
         }
     }
 
@@ -69,9 +65,8 @@ class ContactListAdapter(
         notifyItemRangeChanged(position, itemCount)
     }
 
-    interface contactListAdapterOnClick {
+    interface filterCategoryListAdapterOnClick {
 
-        fun editContact(pos: Int, model: Contact)
-        fun removeContact(pos: Int, model: Contact)
+        fun onClick(pos: Int, model: Category)
     }
 }

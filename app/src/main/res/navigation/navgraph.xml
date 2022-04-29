@@ -26,7 +26,7 @@
             android:id="@+id/action_contactListFragment_to_addCategoryFragment"
             app:destination="@id/addCategoryFragment" />
         <action
-            android:id="@+id/action_contactListFragment_to_editContactFragment3"
+            android:id="@+id/action_contactListFragment_to_editContactFragment"
             app:destination="@id/editContactFragment" />
     </fragment>
     <fragment
@@ -42,11 +42,11 @@
         android:id="@+id/editContactFragment"
         android:name="com.rk.silvertouchapp.ui.fragment.editContact.EditContactFragment"
         android:label="EditContactFragment" >
+        <action
+            android:id="@+id/action_editContactFragment_to_contactListFragment"
+            app:destination="@id/contactListFragment" />
         <argument
             android:name="contactModelArgs"
             app:argType="com.rk.silvertouchapp.model.Contact" />
-        <action
-            android:id="@+id/action_editContactFragment_to_contactListFragment2"
-            app:destination="@id/contactListFragment" />
     </fragment>
 </navigation>
